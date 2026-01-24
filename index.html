@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Delivery Proof</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family: sans-serif; padding: 20px">
+
+  <h2>Delivery Proof</h2>
+  <p>Order: <strong id="order"></strong></p>
+
+  <input
+    type="file"
+    accept="image/*"
+    capture="environment"
+    id="photo"
+    style="margin: 20px 0;"
+  />
+
+  <br>
+
+  <button onclick="send()">Submit</button>
+
+  <p id="status"></p>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get("order");
+
+document.getElementById("order").innerText = orderId || "UNKNOWN";
+
+async function send() {
+  const file = document.getElementById("photo").files[0];
+  if (!file) {
+    alert("Please take a photo");
+    return;
+  }
+
+  document.getElementById("status").innerText = "Uploading...";
+
+  const form = new FormData();
+  form.append("order_id", orderId);
+  form.append("photo", file);
+
+  await fetch("https://integrations.unalukaglobal.com/webhook-test/ed9afafb-31f1-48ea-ac4c-d81e80c46be2", {
+    method: "POST",
+    body: form
+  });
+
+  document.getElementById("status").innerText = "Uploaded ✅";
+}
+</script>
+
+</body>
+</html>
